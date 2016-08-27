@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		/*body{
+			width:300px;
+			height: 200px;
+			position: absolute;
+			border-radius: 3px;
+			box-shadow: 0,0,5px,#ofo;
+			-webkit-box-reflect:below 5px -webkit-linear-gradient();
+		}*/
+		div.circle{
+			height: 100px;
+			width:50px;
+			background:#9da;
+			border-radius:50px 0 0 50px;
+			
+		}
+		div.semi-circle{
+			height: 100px;
+			width:50px;
+			background:#9da;
+			border-radius:10px;
+		}
+		#border_image{
+			margin:0 auto;
+			height:1000px;
+			line-height: 1000px;
+			text-align:center;
+			font-size:30px;
+			border:15px solid #ccc;
+			border-image:url(../11.png) 10 10 10 10 round;
+			border-radius: 10px ;
+		}
+	</style>
+</head>
+<body>
+<!--
+	<div id="wrap">
+		<img src="" style="left:210px;transform:rotateY(45deg) ;translateZ(-100)" />
+		<img src="" style="left:210px;transform:rotateY(45deg) ;translateZ(-100)" />
+		<img src="" style="left:210px;translateZ(-100)" />
+		<img src="" style="left:210px;transform:rotateY(45deg) ;translateZ(-100)" />
+		<img src="" style="left:210px;transform:rotateY(45deg) ;translateZ(-100)" />
+	</div>-->
+	<div class="circle"></div>
+	<br />
+	<!--任务部分-->
+	<div class="semi-circle"></div>
+	<div id="border_image">
+		请为我镶嵌上漂亮的画框吧
+	</div>
+</body>
+</html>

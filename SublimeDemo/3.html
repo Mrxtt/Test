@@ -1,0 +1,505 @@
+!
+function() {
+    function e(e) {
+        sogouExplorer.extension.sendRequest(e)
+    }
+    function t() {
+        var e = "";
+        return e = document.getSelection ? document.getSelection().toString() : document.selection.createRange().text,
+        e = e.trim(),
+        1 == e.length && 1 === e.charCodeAt(0) && (e = ""),
+        e
+    }
+    function n(e, t, n) {
+        e.addEventListener ? e.addEventListener(t, n, !0) : e.attachEvent ? e.attachEvent("on" + t, n) : e["on" + t] = n
+    }
+    function i(e, t, n) {
+        e.removeEventListener ? e.removeEventListener(t, n, !0) : e.detachEvent ? e.detachEvent("on" + t, n) : e["on" + t] = null
+    }
+    function o(e) {
+        e = e || window.event,
+        e.target = e.target || e.srcElement;
+        var t;
+        e.which = e.which || (t = e.button, 1 & t ? 1 : 2 & t ? 3 : 4 & t ? 2 : 0);
+        var n = document.documentElement,
+        i = document.body;
+        return e.pageX = e.pageX || e.clientX + (n && n.scrollLeft || i && i.scrollLeft || 0) - (n && n.clientLeft || i && i.clientLeft || 0),
+        e.pageY = e.pageY || e.clientY + (n && n.scrollTop || i && i.scrollTop || 0) - (n && n.clientTop || i && i.clientTop || 0),
+        e
+    }
+    function r() {
+        try {
+            document.execCommand("copy")
+        } catch(e) {}
+    }
+    function a(e) {
+        var t = !0,
+        n = e.tagName.toLowerCase();
+        return 0 != e.disabled || "input" != n && "textarea" != n || (t = !1),
+        t
+    }
+    function c(t, n) { (0 != M || 0 != t) && n && e({
+            cmd: "panel",
+            type: t,
+            data: n,
+            uuid: T.create()
+        })
+    }
+    function u(e) {
+        for (var t = 0; e && 1 === e.nodeType;) t += e.offsetLeft,
+        e = e.offsetParent;
+        return t
+    }
+    function d(e) {
+        return Math.max(e.scrollWidth, e.offsetWidth)
+    }
+    function m() {
+        var e;
+        if ("getSelection" in window) {
+            var t = getSelection(),
+            n = t.getRangeAt(0);
+            e = n.commonAncestorContainer
+        } else {
+            var n = document.selection.createRange();
+            e = n.parentElement
+        }
+        return e
+    }
+    function s(e) {
+        var t = m();
+        if (1 == t.nodeType) {
+            var n = u(t),
+            i = n + d(t);
+            return e > n && i > e
+        }
+        return ! 0
+    }
+    function l(e, t, n) {
+        var i = e[t];
+        e[t] = e[n],
+        e[n] = i
+    }
+    function f(e) {
+        e.x1 > e.x2 && l(e, "x1", "x2"),
+        e.y1 > e.y2 && l(e, "y1", "y2")
+    }
+    function h(e, t, n) {
+        f(n);
+        var i = 16;
+        return t < n.y1 - i || t > n.y2 + i ? !0 : (e < n.x1 || e > n.x2) && !s(e) ? !0 : !1
+    }
+    function v() {
+        try {
+            "getSelection" in window ? getSelection().removeAllRanges() : document.selection.empty()
+        } catch(e) {}
+    }
+    function w(e) {
+        var t = arguments.callee;
+        if ("number" != typeof t.offset) {
+            var n = document.body.scrollTop,
+            i = document.createElement("div");
+            i.style.cssText = "position: absolute; left: 0; top: 0;",
+            document.body.appendChild(i),
+            t.offset = -i.getBoundingClientRect().top - n,
+            document.body.removeChild(i),
+            i = null
+        }
+        if (e) {
+            var o = e.getBoundingClientRect(),
+            r = t.offset;
+            return {
+                top: o.top + r,
+                right: o.right + r,
+                bottom: o.bottom + r,
+                left: o.left + r
+            }
+        }
+    }
+    function p(e, t) {
+        for (var n, i = document.getElementsByTagName("iframe"), o = 0, r = i.length; r > o; ++o) {
+            var a = i[o],
+            c = a.getAttribute("name");
+            if (c === e) {
+                n = a;
+                break
+            }
+        }
+        if (!n) for (var o = 0,
+        r = i.length; r > o; ++o) {
+            var a = i[o];
+            if (a.src === t) {
+                n = a;
+                break
+            }
+        }
+        var u = {
+            width: window.innerWidth || document.documentElement.clientWidth,
+            height: window.innerHeight || document.documentElement.clientHeight,
+            left: 0,
+            top: 0
+        };
+        if (n) {
+            var d = w(n);
+            u.left = d.left,
+            u.top = d.top
+        }
+        return u
+    }
+    function g() {
+        function e(e) {
+            if (r) {
+                e = o(e);
+                var n = {
+                    clientX: e.clientX,
+                    clientY: e.clientY
+                },
+                i = t();
+                if (i) {
+                    if (u.x2 = e.pageX, u.y2 = e.pageY, "mouseup" == e.type && !e.shiftKey && u.x2 == u.x1 && u.y2 == u.y1) return;
+                    setTimeout(function() {
+                        x(n)
+                    },
+                    0)
+                }
+            }
+            r = !1
+        }
+        function i(e) {
+            var n = t();
+            return n ? void 0 : c(0, e.type || "key")
+        }
+        if (!g.hasrun) {
+            g.hasrun = !0;
+            var r = !1,
+            u = {};
+            n(document, "mouseup", e),
+            n(document, "dblclick", e),
+            n(document, "mousedown",
+            function(e) {
+                if (c(0, "mousedown"), e = o(e), 1 == e.which && (r = a(e.target))) {
+                    var n = t();
+                    if (n && !e.shiftKey) {
+                        var i = h(e.pageX, e.pageY, u);
+                        i && v()
+                    }
+                    u.x1 = e.pageX,
+                    u.y1 = e.pageY
+                }
+            }),
+            n(window, "resize",
+            function() {
+                c(0, "resize")
+            }),
+            n(document, "keydown", i),
+            n(document, "keyup", i),
+            n(document, "focusin",
+            function(e) {
+                e = o(e);
+                var t = e.target,
+                n = t.nodeName.toUpperCase(); ("INPUT" == n || "TEXTAREA" == n) && c(0, "focusin")
+            }),
+            n(document, "mousewheel",
+            function() {
+                c(0, "mousewheel-ie")
+            }),
+            n(window, "mousewheel",
+            function(e) {
+                c(0, "mousewheel")
+            }),
+            n(window, "hashchange",
+            function(e) {
+                var n = t();
+                n && v(),
+                c(0, "hashchange")
+            })
+        }
+    }
+    function y(t, n) {
+        var i = window == top;
+        if (i) a = {
+            x: t.clientX,
+            y: t.clientY,
+            w: window.innerWidth || document.documentElement.clientWidth,
+            h: window.innerHeight || document.documentElement.clientHeight
+        },
+        n(a);
+        else {
+            var o = this.name;
+            try {
+                var r = w(frameElement),
+                a = {
+                    x: t.clientX + r.left,
+                    y: t.clientY + r.top,
+                    w: parent.innerWidth || parent.document.documentElement.clientWidth,
+                    h: parent.innerHeight || parent.document.documentElement.clientHeight
+                };
+                n(a)
+            } catch(c) {
+                var u = t.clientX,
+                d = t.clientY;
+                e({
+                    cmd: "get-relative-position-and-size",
+                    id: z(function(e) {
+                        a = {
+                            x: u + e.left,
+                            y: d + e.top,
+                            w: e.width,
+                            h: e.height
+                        },
+                        n(a)
+                    }),
+                    data: {
+                        name: o,
+                        url: location.href
+                    }
+                })
+            }
+        }
+    }
+    function x(e) {
+        function n(e) {
+            c(1, {
+                text: i,
+                zoom: 100 * C.zoom(),
+                position: e
+            })
+        }
+        if (!A) {
+            var i = t();
+            return i && "输入法手写拼音关闭" != i ? void y(e, n) : void c(0, "no-selection")
+        }
+    }
+    function b(e, t, n) {
+        var i, o = 0,
+        r = function() {
+            n.timer = null,
+            o = +new Date,
+            e.apply(this, i)
+        };
+        return function() {
+            i = arguments;
+            var a = +new Date,
+            c = t - (a - o);
+            0 > c ? (n.timer && (clearTimeout(n.timer), n.timer = null), o = a, e.apply(this, i)) : !n.timer && n.trailing && (n.timer = setTimeout(r, c))
+        }
+    }
+    function P(e, t, o) {
+        M = !!e,
+        o && (e && t ? n(document, "mousemove", R) : (X.timer && clearTimeout(X.timer), i(document, "mousemove", R)))
+    }
+    function E() {
+        if (!E.hasRun) {
+            E.hasRun = !0;
+            for (var e = "prefix_",
+            t = document.getElementsByTagName("iframe"), n = t.length - 1; n >= 0; n--) {
+                t[n].name || t[n].setAttribute("name", e + n);
+                var i = t[n].getAttribute("src");
+                i && (t[n].src += "#" + e + n)
+            }
+        }
+    }
+    if (!window._se_multi_trident_insert) {
+        window._se_multi_trident_insert = !0;
+        var C = function() {
+            var e = function() {
+                return window.devicePixelRatio || 1
+            },
+            t = function() {
+                return {
+                    zoom: 1,
+                    devicePxPerCssPx: 1
+                }
+            },
+            n = function() {
+                var t = Math.round(screen.deviceXDPI / screen.logicalXDPI * 100) / 100;
+                return {
+                    zoom: t,
+                    devicePxPerCssPx: t * e()
+                }
+            },
+            i = function() {
+                var t = Math.round(document.documentElement.offsetHeight / window.innerHeight * 100) / 100;
+                return {
+                    zoom: t,
+                    devicePxPerCssPx: t * e()
+                }
+            },
+            o = function() {
+                var t = Math.round(top.window.outerWidth / top.window.innerWidth * 100) / 100;
+                return {
+                    zoom: t,
+                    devicePxPerCssPx: t * e()
+                }
+            },
+            r = function() {
+                var t = Math.round(window.outerWidth / window.innerWidth * 100) / 100;
+                return {
+                    zoom: t,
+                    devicePxPerCssPx: t * e()
+                }
+            },
+            a = function() {
+                var t = 90 == Math.abs(window.orientation) ? screen.height: screen.width,
+                n = t / window.innerWidth;
+                return {
+                    zoom: n,
+                    devicePxPerCssPx: n * e()
+                }
+            },
+            c = function() {
+                var t = function(e) {
+                    return e.replace(/;/g, " !important;")
+                },
+                n = document.createElement("div");
+                n.innerHTML = "1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>0",
+                n.setAttribute("style", t("font: 100px/1em sans-serif; -webkit-text-size-adjust: none; text-size-adjust: none; height: auto; width: 1em; padding: 0; overflow: visible;"));
+                var i = document.createElement("div");
+                i.setAttribute("style", t("width:0; height:0; overflow:hidden; visibility:hidden; position: absolute;")),
+                i.appendChild(n),
+                document.body.appendChild(i);
+                var o = 1e3 / n.clientHeight;
+                return o = Math.round(100 * o) / 100,
+                document.body.removeChild(i),
+                {
+                    zoom: o,
+                    devicePxPerCssPx: o * e()
+                }
+            },
+            u = function() {
+                var e = s("min--moz-device-pixel-ratio", "", 0, 10, 20, 1e-4);
+                return e = Math.round(100 * e) / 100,
+                {
+                    zoom: e,
+                    devicePxPerCssPx: e
+                }
+            },
+            d = function() {
+                return {
+                    zoom: u().zoom,
+                    devicePxPerCssPx: e()
+                }
+            },
+            m = function() {
+                var t = window.top.outerWidth / window.top.innerWidth;
+                return t = Math.round(100 * t) / 100,
+                {
+                    zoom: t,
+                    devicePxPerCssPx: t * e()
+                }
+            },
+            s = function(e, t, n, i, o, r) {
+                function a(n, i, o) {
+                    var u = (n + i) / 2;
+                    if (0 >= o || r > i - n) return u;
+                    var d = "(" + e + ":" + u + t + ")";
+                    return c(d).matches ? a(u, i, o - 1) : a(n, u, o - 1)
+                }
+                var c, u, d, m;
+                window.matchMedia ? c = window.matchMedia: (u = document.getElementsByTagName("head")[0], d = document.createElement("style"), u.appendChild(d), m = document.createElement("div"), m.className = "mediaQueryBinarySearch", m.style.display = "none", document.body.appendChild(m), c = function(e) {
+                    d.sheet.insertRule("@media " + e + "{.mediaQueryBinarySearch {text-decoration: underline} }", 0);
+                    var t = "underline" == getComputedStyle(m, null).textDecoration;
+                    return d.sheet.deleteRule(0),
+                    {
+                        matches: t
+                    }
+                });
+                var s = a(n, i, o);
+                return m && (u.removeChild(d), document.body.removeChild(m)),
+                s
+            },
+            l = function() {
+                var e = t;
+                return isNaN(screen.logicalXDPI) || isNaN(screen.systemXDPI) ? window.navigator.msMaxTouchPoints ? e = i: window.chrome && !(window.opera || navigator.userAgent.indexOf(" Opera") >= 0) ? e = o: Object.prototype.toString.call(window.HTMLElement).indexOf("Constructor") > 0 ? e = r: "orientation" in window && "webkitRequestAnimationFrame" in window ? e = a: "webkitRequestAnimationFrame" in window ? e = c: navigator.userAgent.indexOf("Opera") >= 0 ? e = m: window.devicePixelRatio ? e = d: u().zoom > .001 && (e = u) : e = n,
+                e
+            } ();
+            return {
+                zoom: function() {
+                    return l().zoom
+                },
+                device: function() {
+                    return l().devicePxPerCssPx
+                }
+            }
+        } ();
+        String.prototype.trim = String.prototype.trim ||
+        function() {
+            return this.replace(/^\s+|\s+$/, "")
+        };
+        var z = function() {
+            var e = "_sogou_search_translate_",
+            t = 1;
+            return function(n) {
+                var i = e + ++t;
+                return window[i] = n,
+                i
+            }
+        } (),
+        T = function() {
+            var e;
+            return {
+                get: function() {
+                    return e
+                },
+                create: function() {
+                    return e = ("" + Math.random()).slice(2) + (new Date).getTime()
+                }
+            }
+        } (),
+        X = {
+            trailing: !0
+        },
+        R = b(function(t) {
+            t = o(t);
+            var n = {
+                clientX: t.clientX,
+                clientY: t.clientY
+            };
+            y(n,
+            function(t) {
+                e({
+                    cmd: "opacity-update",
+                    data: {
+                        position: t,
+                        zoom: 100 * C.zoom()
+                    }
+                })
+            })
+        },
+        100, X);
+        window == top && ("complate" == document.readyState ? E() : document.addEventListener("DOMContentLoaded", E, !1)),
+        sogouExplorer.extension.onRequest.addListener(function(t, n, i) {
+            var o = t.cmd;
+            switch (o) {
+            case "config-update":
+                var a = t.data;
+                A = 1 == !!a.disableAll;
+                break;
+            case "copy":
+                t.uuid == T.get() && r();
+                break;
+            case "run":
+                var c = t.id,
+                u = t.data,
+                d = window[c];
+                "function" == typeof d && (d(u), window[c] = null);
+                break;
+            case "get-relative-position-and-size":
+                if (top == window) {
+                    var u = t.data,
+                    m = p(u.name, u.url);
+                    e({
+                        cmd: "run",
+                        id: t.id,
+                        data: m
+                    })
+                }
+                break;
+            case "sync-layer-status":
+                P(t.data, t.helper, t.support)
+            }
+        });
+        var A = !1,
+        M = !1;
+        g()
+    }
+} ();
