@@ -1,0 +1,8 @@
+{
+    "env": {
+        "ANTHROPIC_AUTH_TOKEN": "sk-QWuItOfTotJnxXlrZioz5I2MtjVgYMFCytWUm6t0yWrmGgdQ",
+        "ANTHROPIC_BASE_URL": "https://taizi.api.51yp.de5.net",
+        "API_TIMEOUT_MS": "3000000",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
+    }
+}
